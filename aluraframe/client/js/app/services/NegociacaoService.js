@@ -3,6 +3,18 @@ class NegociacaoService{
         this._http = new HttpService();
     }
 
+    obterNegociacoes(){
+        return Promise.all([
+            this.obterNegociacaoDaSemana(),
+            this.obterNegociacaoDaSemanaAnterior(),
+            this.obterNegociacaoDaSemanaRetrasada()
+        ]).then(negociacoes =>
+            negociacoes.reduce((novoArray, array) => novoArray.concat(array), [])
+        ).catch(erro => {
+            throw new Error(erro)
+        });
+    }
+
     obterNegociacaoDaSemana(){
         return new Promise((resolve, reject) => {
             this._http.get('negociacoes/semana')
