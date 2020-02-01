@@ -23,7 +23,7 @@ var ConnectionFactory = (function (){
                     if(!connection) {
                         connection = e.target.result;
                         close = connection.close.bind(connection);
-                        connection.close = () => {
+                        connection.close = function (){
                             throw new Error('Você não fechar diretamnete a conexão');
                         }
                     }
