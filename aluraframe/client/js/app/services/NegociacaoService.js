@@ -1,22 +1,44 @@
 class NegociacaoService{
-    obterNegociacaoDaSemana(cb){
-        let xhr = new XMLHttpRequest();
-        xhr.open('GET', 'negociacoes/semana');
-        
-        xhr.onreadystatechange = () => {
-            if(xhr.readyState == 4){
-                if(xhr.status == 200){
-                    const negociacoes = JSON.parse(xhr.responseText)
-                        .map(obj => new Negociacao(new Date(obj.data), obj.quantidade, obj.valor));
-                    cb(null, negociacoes);
-                        
-                }else{
-                    console.log(xhr.responseText);
-                    cb('Não foi possivel obter as negociações', null);
-                }
-            }
-        }
+    constructor(){
+        this._http = new HttpService();
+    }
 
-        xhr.send();
+    obterNegociacaoDaSemana(){
+        return new Promise((resolve, reject) => {
+            this._http.get('negociacoes/semana')
+            .then(negociacoes =>
+                resolve(negociacoes.map(obj => 
+                    new Negociacao(new Date(obj.data), obj.quantidade, obj.valor)))
+            ).catch(erro => {
+                console.log(erro);
+                reject('Não foi possivel obter as negociações');
+            });
+        });
+    }
+
+    obterNegociacaoDaSemanaAnterior(){
+        return new Promise((resolve, reject) => {
+            this._http.get('negociacoes/anterior')
+            .then(negociacoes =>
+                resolve(negociacoes.map(obj => 
+                    new Negociacao(new Date(obj.data), obj.quantidade, obj.valor)))
+            ).catch(erro => {
+                console.log(erro);
+                reject('Não foi possivel obter as negociações anteriores');
+            });
+        });
+    }
+
+    obterNegociacaoDaSemanaRetrasada(){
+        return new Promise((resolve, reject) => {
+            this._http.get('negociacoes/retrasada')
+            .then(negociacoes =>
+                resolve(negociacoes.map(obj => 
+                    new Negociacao(new Date(obj.data), obj.quantidade, obj.valor)))
+            ).catch(erro => {
+                console.log(erro);
+                reject('Não foi possivel obter as negociações retrasadas');
+            });
+        });
     }
 }
