@@ -4,6 +4,7 @@ var ConnectionFactory = (function (){
     const dbName = 'aluraframe';
 
     let connection = null;
+    let close = null;
 
     return class ConnectionFactiory{
         constructor(){
@@ -19,7 +20,13 @@ var ConnectionFactory = (function (){
                 };
 
                 openRequest.onsuccess = e =>{
-                    if(!connection) connection = e.target.result;
+                    if(!connection) {
+                        connection = e.target.result;
+                        close = connection.close.bind(connection);
+                        connection.close = () => {
+                            throw new Error('Você não fechar diretamnete a conexão');
+                        }
+                    }
                     resolve(connection);
                 };
 
@@ -38,6 +45,13 @@ var ConnectionFactory = (function (){
 
                 connection.createObjectStore(store, {autoIncrement: true});
             })
+        }
+
+        static closeConnection(){
+            if(connection){
+                close();
+                connection = [];
+            }
         }
     }
 })();
