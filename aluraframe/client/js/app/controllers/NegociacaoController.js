@@ -7,6 +7,8 @@ class NegociacaoController{
         this._inputValor = $('#valor');
         this._ordemAtual = '';
 
+        this._service = new NegociacaoService();
+
         this._listaNegociacoes = new Bind(
             new ListaNegociacoes(), 
             new NegociacaoView($('#negociacoesView')),
@@ -21,14 +23,13 @@ class NegociacaoController{
     }
 
     _init(){
-        ConnectionFactory
-        .getConnection()
-        .then(connection => new NegociacaoDao(connection))
-        .then(dao => dao.listaTodos())
-        .then(negociacoes => 
-            negociacoes.forEach(negociacao => 
-                this._listaNegociacoes.adiciona(negociacao)))
-        .catch(erro => this._mensagem.texto = erro);
+
+        this._service
+            .lista()
+            .then(negociacoes => 
+                negociacoes.forEach(negociacao => 
+                    this._listaNegociacoes.adiciona(negociacao)))
+            .catch(erro => this._mensagem.texto = erro);
 
         setInterval(() => {
             this.importaNegociacoes();
@@ -39,7 +40,7 @@ class NegociacaoController{
         event.preventDefault();
         let negociacao = this._criarNegociacao();
 
-        new NegociacaoService()
+        this._service
             .cadastra(negociacao)
             .then(mensagem => {
                 this._listaNegociacoes.adiciona(negociacao);
@@ -49,9 +50,9 @@ class NegociacaoController{
     }
 
     importaNegociacoes(){
-        const service = new NegociacaoService();
-        
-        service.obterNegociacoes()
+
+        this._service
+            .obterNegociacoes()
             .then(negociacoes => 
                 negociacoes.filter(negociacao => 
                     !this._listaNegociacoes.negociacoes.some(negociacaoExistente =>
@@ -72,15 +73,13 @@ class NegociacaoController{
     }
 
     apaga(){
-        ConnectionFactory
-            .getConnection()
-            .then(connection => new NegociacaoDao(connection))
-            .then(dao => dao.apagarTodos())
+
+        this._service
+            .apaga()
             .then(mensagem => {
                 this._mensagem.texto = mensagem;
-                this._listaNegociacoes.esvazia();
-            })
-            .catch(mensagem => this._mensagem.texto = mensagem);
+                this._listaNegociacoes.esvazia();})
+            .catch(erro => this._mensagem.texto = erro);
     }
 
     _criarNegociacao(){
