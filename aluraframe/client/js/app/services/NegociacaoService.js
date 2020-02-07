@@ -94,10 +94,14 @@ class NegociacaoService{
                     .then(negociacoes => 
                         negociacoes.filter(negociacao => 
                             !listaAtual.some(negociacaoExistente =>
-                                JSON.stringify(negociacao) == JSON.stringify(negociacaoExistente))))
+                                negociacao.equal(negociacaoExistente))))
                     .catch(erro => {
                         console.log(erro);
                         throw new Error('Não foi possivel buscar a lista de negociações importadas');
                     });
+    }
+
+    equal(negociacaoExtena){
+        return JSON.stringify(this) == JSON.stringify(negociacaoExtena);
     }
 }
