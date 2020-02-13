@@ -22,7 +22,7 @@ export class NegociacaoService{
 
     obterNegociacaoDaSemana(){
         return new Promise((resolve, reject) => {
-            this._http.get('http://localhost:3000/negociacoes/semana')
+            this._http.get(`${SERVICE_URL}/negociacoes/semana`)
             .then(negociacoes =>
                 resolve(negociacoes.map(obj => 
                     new Negociacao(new Date(obj.data), obj.quantidade, obj.valor)))
@@ -35,7 +35,7 @@ export class NegociacaoService{
 
     obterNegociacaoDaSemanaAnterior(){
         return new Promise((resolve, reject) => {
-            this._http.get('http://localhost:3000/negociacoes/anterior')
+            this._http.get(`${SERVICE_URL}/negociacoes/anterior`)
             .then(negociacoes =>
                 resolve(negociacoes.map(obj => 
                     new Negociacao(new Date(obj.data), obj.quantidade, obj.valor)))
@@ -48,7 +48,7 @@ export class NegociacaoService{
 
     obterNegociacaoDaSemanaRetrasada(){
         return new Promise((resolve, reject) => {
-            this._http.get('http://localhost:3000/negociacoes/retrasada')
+            this._http.get(`${SERVICE_URL}/negociacoes/retrasada`)
             .then(negociacoes =>
                 resolve(negociacoes.map(obj => 
                     new Negociacao(new Date(obj.data), obj.quantidade, obj.valor)))
